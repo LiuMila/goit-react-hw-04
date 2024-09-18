@@ -5,16 +5,24 @@ import { Overlay, ModalWindow } from './ImageModal.style';
 
 const modalRoot = document.querySelector('#modal-root');
 
-const ImageModal = ({ data, onClose }) => {
+export const ImageModal = ({ data, onClose }) => {
+  // Закриття модального вікна при натисканні клавіші Escape
   useEffect(() => {
+    const handleOnClose = e => {
+      if (e.code === 'Escape') {
+        onClose();
+      }
+    };
+
     window.addEventListener('keydown', handleOnClose);
 
+    // Видалення слухача подій після закриття модального вікна
     return () => window.removeEventListener('keydown', handleOnClose);
-  });
+  }, [onClose]);
 
-  const handleOnClose = e => {
-    console.log(e.code);
-    if (e.code === 'Escape' || e.currentTarget === e.target) {
+  // Закриття модального вікна при кліку за межами модального вікна
+  const handleBackdropClick = e => {
+    if (e.currentTarget === e.target) {
       onClose();
     }
   };
@@ -22,7 +30,7 @@ const ImageModal = ({ data, onClose }) => {
   const { largeImg, alt } = data;
 
   return createPortal(
-    <Overlay onClick={handleOnClose}>
+    <Overlay onClick={handleBackdropClick}>
       <ModalWindow>
         <img src={largeImg} alt={alt} />
       </ModalWindow>
@@ -38,5 +46,3 @@ ImageModal.propTypes = {
   }),
   onClose: PropTypes.func.isRequired,
 };
-
-export default ImageModal;

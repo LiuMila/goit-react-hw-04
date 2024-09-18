@@ -1,4 +1,4 @@
-import { ImageCard }  from '/src/components/ImageModal/ImageModal.jsx';
+import { ImageCard }  from '../ImageCard/ImageCard';
 import { ImageList } from './ImageGallery.style';
 import PropTypes from 'prop-types';
 

@@ -10,7 +10,7 @@ import { ImageGallery }  from '../components/ImageGallery/ImageGallery'
 
 import { ButtonLoadMore } from "./LoadMoreBtn/LoadMoreBtn";
 import { Loader } from "./Loader/Loader";
-import { ImageModal } from "./ImageModal/ImageModal";
+import { ImageModal } from "../components/ImageModal/ImageModal";
 
 
 export const App = () => {
@@ -26,7 +26,7 @@ export const App = () => {
   useEffect(() => {
     
     fetchImgData()
- // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, imageName])
 
   async function fetchImgData() {
@@ -55,18 +55,18 @@ export const App = () => {
       
     } catch (error) {
       console.log(error)
-    } 
+    }
   }
 
   const onLoadMore = async () => {
-    setPage(prevPage => 
+    setPage(prevPage =>
       prevPage + 1
     )
   }
 
   const toggleModal = (data) => {
     setShowModal(!showModal)
-     if (data) {
+    if (data) {
       setModalValue(data);
     } else {
       setModalValue({});
@@ -76,16 +76,17 @@ export const App = () => {
   const handleSearch = async (imageName) => {
     setImageName(imageName)
     setImages([])
-    setLoadMore(true)
+    setLoadMore(false)
     setPage(1)
   };
 
-  return <>
-      {showModal && <ImageModal onClick={toggleModal} data={modalValue} onClose={ toggleModal} />}
-      {loading && <Loader/>}
-      <SearchBar onSubmit={handleSearch} />
-      <ImageGallery images={images} loading={loading} onClick={toggleModal} loadMore={onLoadMore} />
-      {loadMore && <ButtonLoadMore onClick={onLoadMore} />}
-      <ToastContainer autoClose={3000} />
-    </>
-}
+  return (<>
+    {showModal && <ImageModal onClick={toggleModal} data={modalValue} onClose={toggleModal} />}
+    {loading && <Loader />}
+    <SearchBar onSubmit={handleSearch} />
+    <ImageGallery images={images} loading={loading} onClick={toggleModal} loadMore={onLoadMore} />
+    {loadMore && <ButtonLoadMore onClick={onLoadMore} />}
+    <ToastContainer autoClose={3000} />
+  </>
+  );
+};

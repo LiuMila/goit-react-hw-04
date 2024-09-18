@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { ImageItem, Image } from "./ImageCard.style"
 
-const ImageCard = ({ id, webformatURL, largeImageURL, tags, onClick }) => {
+export const ImageCard = ({ id, webformatURL, largeImageURL, tags, onClick }) => {
     
     return (
         <ImageItem key={id} onClick={() => {
@@ -19,5 +19,3 @@ ImageCard.propTypes = {
   largeImageURL: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
 };
-
-export default ImageCard;
