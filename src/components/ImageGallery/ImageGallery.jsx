@@ -1,5 +1,5 @@
-import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
-import { ImageList } from './ImageGallery.styled';
+import { ImageGalleryItem } from '../ImageCard/ImageCard';
+import { ImageList } from './ImageGallery.style';
 import PropTypes from 'prop-types';
 
 

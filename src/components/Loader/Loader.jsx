@@ -1,5 +1,5 @@
 import { TailSpin } from 'react-loader-spinner';
-import {StyledLoader} from './Loader.styled'
+import {StyledLoader} from './Loader.style'
 
 export const Loader = () => {
   return (

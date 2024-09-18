@@ -5,12 +5,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { fetchImg } from "../components/ErrorMessage/ErrorMessage";
 
-import { SearchBar } from 'components/Searchbar/Searchbar'
-import { ImageGallery }  from 'components/ImageGallery/ImageGallery'
+import { SearchBar } from '../components/SearchBar/SearchBar'
+import { ImageGallery }  from '../components/ImageGallery/ImageGallery'
 
-import { ButtonLoadMore } from "./Button/Button";
+import { ButtonLoadMore } from "./LoadMoreBtn/LoadMoreBtn";
 import { Loader } from "./Loader/Loader";
-import { Modal } from "./Modal/Modal";
+import { Modal } from "./ImageModal/ImageModal";
 
 
 export const App = () => {
