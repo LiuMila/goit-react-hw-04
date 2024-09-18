@@ -10,7 +10,7 @@ import { ImageGallery }  from '../components/ImageGallery/ImageGallery'
 
 import { ButtonLoadMore } from "./LoadMoreBtn/LoadMoreBtn";
 import { Loader } from "./Loader/Loader";
-import { Modal } from "./ImageModal/ImageModal";
+import { ImageModal } from "./ImageModal/ImageModal";
 
 
 export const App = () => {
@@ -81,7 +81,7 @@ export const App = () => {
   };
 
   return <>
-      {showModal && <Modal onClick={toggleModal} data={modalValue} onClose={ toggleModal} />}
+      {showModal && <ImageModal onClick={toggleModal} data={modalValue} onClose={ toggleModal} />}
       {loading && <Loader/>}
       <SearchBar onSubmit={handleSearch} />
       <ImageGallery images={images} loading={loading} onClick={toggleModal} loadMore={onLoadMore} />

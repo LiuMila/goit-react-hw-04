@@ -1,4 +1,4 @@
-import { ImageGalleryItem } from '../ImageCard/ImageCard';
+import { ImageCard }  from '/src/components/ImageModal/ImageModal.jsx';
 import { ImageList } from './ImageGallery.style';
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,7 @@ export const ImageGallery = ({ images, onClick }) => {
 
           <ImageList>
             {images.map(({ id, webformatURL, largeImageURL, tags,}) => (
-              <ImageGalleryItem
+              <ImageCard
                 key={id}
                 id={id}
                 webformatURL={webformatURL}

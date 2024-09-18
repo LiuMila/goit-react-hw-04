@@ -1,38 +1,42 @@
-import { createPortal } from "react-dom";
-import { useEffect } from "react";
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { Overlay, ModalWindow } from './ImageModal.style';
 
-import { Overlay, ModalWindow } from "./ImageModal.style";
+const modalRoot = document.querySelector('#modal-root');
 
-const modalRoot= document.querySelector('#modal-root')
+const ImageModal = ({ data, onClose }) => {
+  useEffect(() => {
+    window.addEventListener('keydown', handleOnClose);
 
-export const Modal = ({ data, onClose }) => {
-    useEffect(() => {
-        window.addEventListener('keydown', e => handleOnClose(e))
-        return window.removeEventListener('keydown',e =>  handleOnClose(e))
-    });
+    return () => window.removeEventListener('keydown', handleOnClose);
+  });
 
-    const handleOnClose = e => {
-        if (e.code === 'Escape' || e.currentTarget === e.target) {
-            onClose()
-        }
-    };
+  const handleOnClose = e => {
+    console.log(e.code);
+    if (e.code === 'Escape' || e.currentTarget === e.target) {
+      onClose();
+    }
+  };
 
-    const {  tags } = data || {};
+  const { largeImg, alt } = data;
 
-     return createPortal(
-            <Overlay onClick={handleOnClose}>
-                <ModalWindow>
-                   <img src={data.largeImageURL} alt={tags} />
-                </ModalWindow>
-            </Overlay>, modalRoot,
-        );
-}
+  return createPortal(
+    <Overlay onClick={handleOnClose}>
+      <ModalWindow>
+        <img src={largeImg} alt={alt} />
+      </ModalWindow>
+    </Overlay>,
+    modalRoot
+  );
+};
 
-Modal.propTypes = {
-    data: PropTypes.shape({
-      largeImageURL: PropTypes.string.isRequired,
-      tags: PropTypes.string.isRequired,
-    }),
-    onClose: PropTypes.func.isRequired,
-}
+ImageModal.propTypes = {
+  data: PropTypes.shape({
+    largeImg: PropTypes.string.isRequired,
+    alt: PropTypes.string.isRequired,
+  }),
+  onClose: PropTypes.func.isRequired,
+};
+
+export default ImageModal;
