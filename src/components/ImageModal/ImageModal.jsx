@@ -1,67 +1,65 @@
+import  { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { ReactModal } from 'react-modal';
-import { Overlay, ModalWindow } from './ImageModal.style';
+import Modal from 'react-modal';
+import { Overlay, ModalWindow } from "./ImageModal.style";
 
+// Встановлюємо кореневий елемент для бібліотеки react-modal
+Modal.setAppElement('#root');
 
+// Стилі для модального вікна
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    transform: 'translate(-50%, -50%)',
+    padding: '0',
+    border: 'none',
+    background: 'none',
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+  },
+};
 
-export const ImageModal = ({ data, onClose }) => {
-  // Закриття модального вікна при натисканні клавіші Escape
-    useEffect(() => {
-      if (typeof document !== 'undefined') {
-      ReactModal.setAppElement('#modal-root');
-        }
-        
-       const handleOnClose = e => {
-         if (e.code === 'Escape') {
-        onClose();
-      }
-    };
+export const ImageModal = ({ data, isOpen, onRequestClose }) => {
+  const { largeImageURL, tags } = data || {};
 
+  const handleOnClose = useCallback((e) => {
+    if (e.code === 'Escape' || e.currentTarget === e.target) {
+      onRequestClose();
+    }
+  }, [onRequestClose]);
+
+  useEffect(() => {
     window.addEventListener('keydown', handleOnClose);
-
-    // Видалення слухача подій після закриття модального вікна
     return () => window.removeEventListener('keydown', handleOnClose);
-  }, [onClose]);
+  }, [handleOnClose]); // Включаємо handleOnClose як залежність
 
 
-  const { largeImg, alt } = data;
-
-   return (
-    <ReactModal
-      isOpen={true}
-      onRequestClose={onClose}
-      style={{
-        overlay: {
-          backgroundColor: 'transparent', // Вимикаємо стилі overlay від ReactModal, щоб використовувати наш стиль
-          zIndex: 1200,
-        },
-        content: {
-          position: 'relative',
-          background: 'transparent',
-          border: 'none',
-          padding: '0',
-          inset: '0',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-      }}
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      style={customStyles}
+      contentLabel="Image Modal"
+      shouldCloseOnOverlayClick={true}
     >
-      <Overlay onClick={onClose}>
-        <ModalWindow>
-          <img src={largeImg} alt={alt} />
+      <Overlay onClick={handleOnClose}>
+        <ModalWindow onClick={(e) => e.stopPropagation()}>
+          <img src={largeImageURL} alt={tags} style={{ width: '100%', height: 'auto' }} />
         </ModalWindow>
       </Overlay>
-    </ReactModal>
+    </Modal>
   );
 };
 
-
 ImageModal.propTypes = {
   data: PropTypes.shape({
-    largeImg: PropTypes.string.isRequired,
-    alt: PropTypes.string.isRequired,
+    largeImageURL: PropTypes.string.isRequired,
+    tags: PropTypes.string.isRequired,
   }),
-  onClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
 };

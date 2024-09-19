@@ -1,92 +1,117 @@
-
-import {  useState, useEffect} from "react"
-import { ToastContainer } from 'react-toastify';
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { fetchImg } from "../components/ErrorMessage/ErrorMessage";
-
-import { SearchBar } from '../components/SearchBar/SearchBar'
-import { ImageGallery }  from '../components/ImageGallery/ImageGallery'
-
+import { SearchBar } from '../components/SearchBar/SearchBar';
+import { ImageGallery } from '../components/ImageGallery/ImageGallery';
 import { ButtonLoadMore } from "./LoadMoreBtn/LoadMoreBtn";
 import { Loader } from "./Loader/Loader";
-import { ImageModal } from "../components/ImageModal/ImageModal";
-
+import { ImageModal } from "./ImageModal/ImageModal";
 
 export const App = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalValue, setModalValue] = useState({});
-  const [loadMore, setLoadMore] = useState(false);
+  const [modalData, setModalData] = useState(null);
   const [page, setPage] = useState(1);
-  // const [totalImages, setTotalImages] = useState(0);
   const [imageName, setImageName] = useState('');
+  const [loadMore, setLoadMore] = useState(false);
 
+  // Запит зображень при зміні `imageName` або `page`
   useEffect(() => {
-    
-    fetchImgData()
+    if (imageName !== '') {
+      fetchImgData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, imageName])
+  }, [imageName, page]);
 
-  async function fetchImgData() {
-    if (!imageName) {
-      return;
-    }
-
-    if (page === 1) {
-      onLoadMore(false);
-      setImages([]);
-    }
-
+  // Функція для запиту зображень
+  const fetchImgData = async () => {
     setLoading(true);
 
     try {
       const { hits, total } = await fetchImg(imageName, page);
-  
-      
+
       if (!total) {
+        setImages([]);
         setLoading(false);
-        
-        return alert('На жаль, за вашим запитом нічого не знайдено');
-      };
-      setImages([...images, ...hits]);
+        toast.error('На жаль, за вашим запитом нічого не знайдено');
+        return;
+      }
+
+      setImages(prevImages => [...prevImages, ...hits]);
       setLoading(false);
-      
+      setLoadMore(hits.length > 0 && hits.length >= 12); // Використовуємо 12, тому що це стандартна кількість зображень, яку повертає API
+
     } catch (error) {
-      console.log(error)
+      setLoading(false);
+      console.error(error);
+      toast.error('Щось пішло не так! Спробуйте ще раз.');
     }
-  }
-
-  const onLoadMore = async () => {
-    setPage(prevPage =>
-      prevPage + 1
-    )
-  }
-
-  const toggleModal = (data) => {
-    setShowModal(!showModal)
-    if (data) {
-      setModalValue(data);
-    } else {
-      setModalValue({});
-    }
-  }
-
-  const handleSearch = async (imageName) => {
-    setImageName(imageName)
-    setImages([])
-    setLoadMore(false)
-    setPage(1)
   };
 
-  return (<>
-    {showModal && <ImageModal onClick={toggleModal} data={modalValue} onClose={toggleModal} />}
-    {loading && <Loader />}
-    <SearchBar onSubmit={handleSearch} />
-    <ImageGallery images={images} loading={loading} onClick={toggleModal} loadMore={onLoadMore} />
-    {loadMore && <ButtonLoadMore onClick={onLoadMore} />}
-    <ToastContainer autoClose={3000} />
-  </>
+  // Обробка пошуку зображень
+  const handleSearch = (imageName) => {
+    if (imageName.trim() === '') {
+      toast.warning('Введіть назву зображення для пошуку');
+      return;
+    }
+    setImageName(imageName);
+    setImages([]);
+    setPage(1);
+    setLoadMore(false);
+  };
+
+  // Підвантаження нової сторінки зображень
+  const handleLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  // Відкриття та закриття модального вікна
+  const toggleModal = (imageData = null) => {
+    setShowModal(prevState => {
+      if (prevState) {
+        // Якщо модальне вікно вже відкрите, просто закрийте його
+        setModalData(null);
+        return false;
+      } else {
+        // Інакше, відкрийте нове модальне вікно
+        setModalData(imageData);
+        return true;
+      }
+    });
+  };
+
+  return (
+    <>
+      <SearchBar onSubmit={handleSearch} />
+
+      {images.length > 0 && (
+        <ImageGallery
+          images={images}
+          onClick={toggleModal}
+        />
+      )}
+
+      {loading && <Loader />}
+
+      {loadMore && !loading && (
+        <ButtonLoadMore onClick={handleLoadMore} />
+      )}
+
+      {/* Модальне вікно рендериться тільки якщо showModal = true */}
+      {showModal && createPortal(
+        <ImageModal
+          isOpen={showModal}
+          data={modalData}
+          onRequestClose={() => toggleModal()} // Закриття модального вікна
+        />,
+        document.body // Модальне вікно рендериться в body
+      )}
+
+      <ToastContainer autoClose={3000} />
+    </>
   );
 };
