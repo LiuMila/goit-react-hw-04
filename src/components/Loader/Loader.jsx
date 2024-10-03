@@ -1,19 +1,9 @@
-import { TailSpin } from 'react-loader-spinner';
-import {StyledLoader} from './Loader.style'
+import {ThreeDots} from 'react-loader-spinner';
 
-export const Loader = () => {
-  return (
-    <StyledLoader>
-      <TailSpin
-        height="100"
-        width="100"
-        color="#4d6da9"
-        ariaLabel="tail-spin-loading"
-        radius="1"
-        wrapperStyle={{}}
-        wrapperClass="Name"
-        visible={true}
-      />
-    </StyledLoader>
+const Loader = () => (
+    <div>
+      <ThreeDots color="#00BFFF" height={80} width={80} />
+    </div>
   );
-};
+  
+  export default Loader;

@@ -1,21 +1,8 @@
-import PropTypes from 'prop-types';
-import { ImageItem, Image } from "./ImageCard.style"
-
-export const ImageCard = ({ id, webformatURL, largeImageURL, tags, onClick }) => {
-    
+export default function ImageCard({ image, onImageClick }) {
+//    const image={image.urls.full};
     return (
-        <ImageItem key={id} onClick={() => {
-            onClick({largeImageURL, tags})
-       }}>
-      <Image src={webformatURL} alt={tags} />
-      </ImageItem>
- )
+        <div onClick={() => onImageClick(image)}>
+            <img src={image.urls.small} alt={image.alt_description} />
+        </div>
+    );
 }
-
-ImageCard.propTypes = {
-  id: PropTypes.number.isRequired,
-  webformatURL: PropTypes.string.isRequired,
-  tags: PropTypes.string,
-  largeImageURL: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-};

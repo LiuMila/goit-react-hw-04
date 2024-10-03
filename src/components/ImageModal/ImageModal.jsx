@@ -1,65 +1,33 @@
-import  { useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import Modal from 'react-modal';
-import { Overlay, ModalWindow } from "./ImageModal.style";
+import Modal from "react-modal";
+import css from './ImageModal.module.css'
 
-// Встановлюємо кореневий елемент для бібліотеки react-modal
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
-// Стилі для модального вікна
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    transform: 'translate(-50%, -50%)',
-    padding: '0',
-    border: 'none',
-    background: 'none',
-  },
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-  },
-};
-
-export const ImageModal = ({ data, isOpen, onRequestClose }) => {
-  const { largeImageURL, tags } = data || {};
-
-  const handleOnClose = useCallback((e) => {
-    if (e.code === 'Escape' || e.currentTarget === e.target) {
-      onRequestClose();
-    }
-  }, [onRequestClose]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleOnClose);
-    return () => window.removeEventListener('keydown', handleOnClose);
-  }, [handleOnClose]); // Включаємо handleOnClose як залежність
-
+const ImageModal = ({ isOpen, onClose, image }) => {
+    // const { largeImageURL, alt_description, user, likes } = image;
+  
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      style={customStyles}
-      contentLabel="Image Modal"
-      shouldCloseOnOverlayClick={true}
+      onRequestClose={onClose}
+      className={css.modal}
+      overlayClassName={css.overlay}
     >
-      <Overlay onClick={handleOnClose}>
-        <ModalWindow onClick={(e) => e.stopPropagation()}>
-          <img src={largeImageURL} alt={tags} style={{ width: '100%', height: 'auto' }} />
-        </ModalWindow>
-      </Overlay>
+      <div>
+        <img
+          src={image?.urls.full}
+          alt={image?.alt_description}
+          width="100%"
+        />
+        <p>Author: {image?.user.name}</p>
+        <p>Likes: {image?.likes}</p>
+        <button onClick={onClose}>
+          Close
+        </button>
+      </div>
     </Modal>
   );
 };
 
-ImageModal.propTypes = {
-  data: PropTypes.shape({
-    largeImageURL: PropTypes.string.isRequired,
-    tags: PropTypes.string.isRequired,
-  }),
-  isOpen: PropTypes.bool.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
-};
+export default ImageModal;

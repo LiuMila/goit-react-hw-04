@@ -1,48 +1,23 @@
-import { useState } from "react";
-import { Header, SearchBarForm, Input, ButtonForm, ButtonLabel } from "./SearchBar.style";
-import { toast } from 'react-toastify';
-import PropTypes from 'prop-types';
+import { toast } from 'react-hot-toast';
+import css from './SearchBar.module.css'
 
+export default function SearchBar({ onSubmit }) {
+    const handleSubmit = e => {
+        e.preventDefault();
+        const query = e.target.elements.query.value.trim();
+        if (!query) {
+            toast.error("Please enter a search term!");
+            return;
+        }
+        onSubmit(query);
+    };
 
-export const SearchBar = ({ onSubmit }) => {
-  const [imageName, setImageName] = useState('');
-
-  const handleNameChange = e => {
-    setImageName(e.currentTarget.value)
-  }
-
-  const handleSubmit = e => {
-    e.preventDefault();
-
-    if (imageName.trim() === '') {
-      toast.warning('Please write what you are looking for.');
-      return;
-    }
-
-    onSubmit(imageName)
-  }
-
-  return (
-        <Header>
-  <SearchBarForm onSubmit={handleSubmit}>
-    <ButtonForm type="submit" >
-      <ButtonLabel>Search</ButtonLabel>
-    </ButtonForm>
-
-    <Input
-      type="text"
-      autoComplete="off"
-      autoFocus
-      placeholder="Search images and photos"
-      value={imageName}
-      onChange={handleNameChange}
-      />
-  </SearchBarForm>
-</Header>
-        )
-  
+    return (
+        <header>
+            <form onSubmit={handleSubmit} className={css.head}>
+                <input type="text" name="query" autoComplete="off" autoFocus placeholder="Search images and photos" />
+                <button type="submit">Search</button>
+            </form>
+        </header>
+    );
 }
-
-SearchBar.propTypes = {
-    onSubmit: PropTypes.func.isRequired, 
-  }
